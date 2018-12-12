@@ -2,11 +2,11 @@
   "groceries": [
     {
       "name": "tomatoes",
-      "quantity": 2
+      "quantity": "2"
     },
     {
       "name": "potatoes",
-      "quantity": 1
+      "quantity": "1"
     },
     {
       "name": "apples",

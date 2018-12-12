@@ -1,48 +1,73 @@
-// Exceeds Expectation Part 1 Code Here
+$("document").ready(function () {
 
-function postGrocery(groceryItem) {
+  $("#groceries").submit(function(e) {
+    let item = $('#grocery_name').val();
+     if(!item){
+        alert("fields can't be blanc");
+     }else{
+        getData();
+        postData();
+     }
+     e.preventDefault(); // avoid to execute the actual submit of the form.
 
-  let submittedItem = $('#grocery_name').val();
-  let submittedQuantity = $('#grocery_quantity').val();
-  let newSubmittedItem = new GroceryItem(submittedItem, submittedQuantity);
-  let newGroceryList = new GroceryList('Market Basket', '5/12/2018');
-  newGroceryList.addItem(newSubmittedItem);
-  let mainDiv = document.getElementById('main');
-  mainDiv.innerHTML = `${newGroceryList.toHTML()}`;
-
-  $( "#groceries" ).submit(function( event ) {
-    event.preventDefault();
-
-    // Get some values from elements on the page:
-    var $form = $( this ),
-      newGroceryName = $form.find( "input[name='name']" ).val(),
-      newGroceryQuantity = $form.find( "input[name='quantity']" ).val() || 1,
-      url = $form.attr( "action" );
-
-    // Send the data using post
-    var posting = $.post( url, { name: newGroceryName, quantity: newGroceryQuantity} );
-
-    // Put the results in a div
-    posting.done(function( data ) {
-      // var mainDiv = $( data ).find( "#main" );
-      $( "#main" ).empty().append( mainDiv );
-    });
   });
-};
 
-
-$(document).ready(() => {
-  // Exceeds Expectation Part 2 Code Here
-  let form = document.getElementsByTagName('form')[0];
-  form.addEventListener('submit', (event) => {
-    event.preventDefault();
-    let submittedItem = $('#grocery_name').val();
-
-    !submittedItem ? alert("fields can't be blanc") : postGrocery(submittedItem);
-
-    // This part of my code allows to clear the form but it also deletes the item from the page. I did not come up with a solution
-    // of how to keep the item on the page. It might require a database to store items, for example(?):
-    // let form = document.getElementById("groceries");
-    // form.reset();
-  });
 });
+
+
+function getData() {
+
+  var url = $(this).attr('action');
+  let item = $('#grocery_name').val();
+  let quantity = $('#grocery_quantity').val();
+  let newSubmittedItem = new GroceryItem(item, quantity);
+  let newGroceryList = new GroceryList('Market Basket', '5/12/2018');
+  newGroceryList.addItem()
+  var data = `\n<li> (${quantity}) ${item} </li>`;
+
+  $.getJSON("/groceries.json")
+    .done(function(groceryData) {
+      $("#main").html(`<h1>${newGroceryList.title}</h1> \n<h2>${newGroceryList.date}</h2> \n<ul>`);
+      groceryData.groceries.forEach(function(elem) {
+        $("#main").append(`\n<li>(${elem.quantity}) ${elem.name} </li>\n`);
+      })
+      $("#main").append(data);
+      $("#main").append(`\n</ul>`);
+    })
+}
+
+function postData() {
+  let form = $( this );
+  let url = "/groceries.json";
+  // var data = $("#groceries").serialize();
+  let item = $('#grocery_name').val();
+  let quantity = $('#grocery_quantity').val();
+
+  var data = {
+    "grocery": JSON.stringify({
+     "name": `${item}`,
+     "quantity": `${quantity}`
+   })
+  };
+
+    $.post( url, data );
+}
+
+
+  // $.ajax({
+  //   url: url,
+  //   type: "POST",
+  //   data: data,
+  //   success: successFn,
+  //   error: errorFn,
+  //   complete: function(xhr, status){
+  //     console.log("completed posting" + data);
+  //
+  //   }
+  // })
+
+
+
+   // $("form").trigger("reset");
+   // $('#submit')[0].reset();
+   // $("#groceries").get(0).reset();
