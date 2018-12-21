@@ -5,3 +5,8 @@ body {
 .row {
   margin: 20px 5%;
 }
+
+#deleteOnClick, #add-item {
+  margin: 20px 5%;
+  border-radius: 20px;
+}

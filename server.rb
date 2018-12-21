@@ -22,7 +22,7 @@ get '/' do
   erb :homepage
 end
 
-get "/groceries" do
+get '/groceries' do
   erb :groceries
 end
 
@@ -30,15 +30,14 @@ get '/groceries.json' do
   read_groceries.to_json
 end
 
+
 post '/groceries.json' do
   body = request.body.read
-  json = JSON.parse(body)
-
-  if !json["grocery"]["name"].empty?
-    add_grocery(json["grocery"])
-
+  @grocery = {"name": params["name"], "quantity": params["quantity"]}
+  if !@grocery[:"name"].empty?
+    add_grocery(@grocery)
     status 201
-    body
+
   else
     status 422
   end
